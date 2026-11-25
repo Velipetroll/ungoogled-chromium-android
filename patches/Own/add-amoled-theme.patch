@@ -2,7 +2,7 @@ description: Add separate AMOLED (#000000) theme option in Settings -> Theme
 
 --- a/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/ThemeType.java
 +++ b/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/ThemeType.java
-@@ -16,12 +16,13 @@ import java.lang.annotation.RetentionPol
+@@ -16,14 +16,15 @@ import java.lang.annotation.RetentionPol
   * Theme setting variations. This is also used for histograms and should therefore be treated
   * as append-only. See DarkThemePreferences in tools/metrics/histograms/enums.xml.
   */
@@ -100,7 +100,7 @@ description: Add separate AMOLED (#000000) theme option in Settings -> Theme
  
      private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener;
  
-@@ -122,10 +123,13 @@ class GlobalNightModeStateController
+@@ -122,10 +123,14 @@ class GlobalNightModeStateController
          final int theme = NightModeUtils.getThemeSetting();
          final boolean newNightModeOn =
                  (theme == ThemeType.SYSTEM_DEFAULT
@@ -139,7 +139,7 @@ description: Add separate AMOLED (#000000) theme option in Settings -> Theme
  </resources>
 --- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeBaseAppCompatActivity.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeBaseAppCompatActivity.java
-@@ -629,5 +629,9 @@ public class ChromeBaseAppCompatActivity
+@@ -629,6 +629,10 @@ public class ChromeBaseAppCompatActivity
              applySingleThemeOverlay(R.style.ThemeOverlay_BrowserUI_DesktopDensity);
              applySingleThemeOverlay(R.style.ThemeOverlay_BrowserUI_DesktopDensity_TabStrip);
          }
