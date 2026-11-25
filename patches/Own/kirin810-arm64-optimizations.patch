@@ -1,16 +1,13 @@
-description: Enable ARMv8.2-A + crypto + fp16 + dotprod + rcpc and Cortex-A76 tuning for Kirin 810 arm64 builds
+description: Enable Cortex-A76 CPU tuning for Kirin 810 arm64 builds without overriding per-target -march flags (e.g. libyuv SME)
 
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
-@@ -1050,6 +1050,12 @@ config("compiler_cpu_abi") {
+@@ -1050,6 +1050,9 @@ config("compiler_cpu_abi") {
    # as NEON is a mandatory part of ARMv8 anyway.
    if (current_cpu == "arm64") {
      defines += [ "__ARM_NEON__=1" ]
 +    if (!is_win && !is_apple) {
-+      cflags += [
-+        "-march=armv8.2-a+crypto+fp16+dotprod+rcpc",
-+        "-mtune=cortex-a76",
-+      ]
++      cflags += [ "-mtune=cortex-a76" ]
 +    }
    }
  }
