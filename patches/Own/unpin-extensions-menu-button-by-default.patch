@@ -1,0 +1,13 @@
+description: Unpin the extensions menu toolbar button by default on Android while keeping extensions enabled
+
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -2028,7 +2028,7 @@ void RegisterProfilePrefs(user_prefs::Pr
+   update_client::RegisterProfilePrefs(registry);
+ 
+ #if BUILDFLAG(IS_ANDROID)
+-  registry->RegisterBooleanPref(prefs::kPinExtensionsMenuButton, true);
++  registry->RegisterBooleanPref(prefs::kPinExtensionsMenuButton, false);
+ #endif
+   // TODO(devlin): This would be more inline with the other calls here if it
+   // were nested in either a class or separate namespace with a simple

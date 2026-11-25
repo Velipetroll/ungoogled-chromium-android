@@ -65,7 +65,7 @@ ungoogled-chromium-android/Disable-contextual-search.patch
 #ungoogled-chromium-android/Add-more-search-engines.patch
 #ungoogled-chromium-android/Add-folder-button-bookmark.patch
 #ungoogled-chromium-android/Enable-update-notification.patch
-ungoogled-chromium-android/Disable-homepage-by-default.patch
+#ungoogled-chromium-android/Disable-homepage-by-default.patch
 #ungoogled-chromium-android/Remove-UI-elements.patch
 ungoogled-chromium-android/Remove-ntp-sites.patch
 ungoogled-chromium-android/Add-save-data-flag.patch
@@ -100,5 +100,10 @@ Extensions/Ultimatum/load-crx.patch
 Extensions/misc/extensions-menu-null-guard.patch
 Own/enable-extensions-by-default.patch
 Own/disable-gemini-by-default.patch
+Own/rename-app-to-chrome.patch
+Own/enable-google-search-engine.patch
+Own/unpin-extensions-menu-button-by-default.patch
+Own/kirin810-arm64-optimizations.patch
+Own/add-amoled-theme.patch
 
 #Other/debug-fix.patch

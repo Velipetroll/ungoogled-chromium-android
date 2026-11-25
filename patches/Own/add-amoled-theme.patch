@@ -1,0 +1,152 @@
+description: Add separate AMOLED (#000000) theme option in Settings -> Theme
+
+--- a/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/ThemeType.java
++++ b/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/ThemeType.java
+@@ -16,12 +16,13 @@ import java.lang.annotation.RetentionPol
+  * Theme setting variations. This is also used for histograms and should therefore be treated
+  * as append-only. See DarkThemePreferences in tools/metrics/histograms/enums.xml.
+  */
+-@IntDef({ThemeType.SYSTEM_DEFAULT, ThemeType.LIGHT, ThemeType.DARK})
++@IntDef({ThemeType.SYSTEM_DEFAULT, ThemeType.LIGHT, ThemeType.DARK, ThemeType.AMOLED})
+ @Retention(RetentionPolicy.SOURCE)
+ @NullMarked
+ public @interface ThemeType {
+     // Values are used for indexing tables - should start from 0 and can't have gaps.
+     int SYSTEM_DEFAULT = 0;
+     int LIGHT = 1;
+     int DARK = 2;
++    int AMOLED = 3;
+ 
+-    int NUM_ENTRIES = 3;
++    int NUM_ENTRIES = 4;
+ }
+--- a/chrome/browser/ui/android/night_mode/java/res/layout/radio_button_group_theme_preference.xml
++++ b/chrome/browser/ui/android/night_mode/java/res/layout/radio_button_group_theme_preference.xml
+@@ -37,6 +37,14 @@ found in the LICENSE file.
+           android:paddingTop="@dimen/settings_item_default_padding"
+           android:paddingBottom="@dimen/settings_item_default_padding" />
+ 
++      <org.chromium.components.browser_ui.widget.RadioButtonWithDescription
++          android:id="@+id/amoled"
++          android:layout_width="match_parent"
++          android:layout_height="wrap_content"
++          android:minHeight="@dimen/min_touch_target_size"
++          android:paddingTop="@dimen/settings_item_default_padding"
++          android:paddingBottom="@dimen/settings_item_default_padding" />
++
+     </org.chromium.components.browser_ui.widget.RadioButtonWithDescriptionLayout>
+ 
+     <!-- Make the row clickable -->
+--- a/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/settings/RadioButtonGroupThemePreference.java
++++ b/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/settings/RadioButtonGroupThemePreference.java
+@@ -80,11 +80,13 @@ public class RadioButtonGroupThemePrefer
+ 
+         mCheckBox.setChecked(mDarkenWebsitesEnabled);
+ 
+-        assert ThemeType.NUM_ENTRIES == 3;
++        assert ThemeType.NUM_ENTRIES == 4;
+         mButtons.set(
+                 ThemeType.SYSTEM_DEFAULT,
+                 (RadioButtonWithDescription) holder.findViewById(R.id.system_default));
+         mButtons.set(ThemeType.LIGHT, (RadioButtonWithDescription) holder.findViewById(R.id.light));
+         mButtons.set(ThemeType.DARK, (RadioButtonWithDescription) holder.findViewById(R.id.dark));
++        mButtons.set(
++                ThemeType.AMOLED, (RadioButtonWithDescription) holder.findViewById(R.id.amoled));
+ 
+         final Context context = getContext();
+@@ -102,7 +104,9 @@ public class RadioButtonGroupThemePrefer
+         assertBound();
+         if (ChromeFeatureList.isEnabled(
+                 ChromeFeatureList.DARKEN_WEBSITES_CHECKBOX_IN_THEMES_SETTING)) {
+-            if (mSetting == ThemeType.SYSTEM_DEFAULT || mSetting == ThemeType.DARK) {
++            if (mSetting == ThemeType.SYSTEM_DEFAULT
++                    || mSetting == ThemeType.DARK
++                    || mSetting == ThemeType.AMOLED) {
+                 mGroup.attachAccessoryView(mCheckboxContainer, mSettingRadioButton);
+                 mCheckboxContainer.setVisibility(View.VISIBLE);
+             } else {
+--- a/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/NightModeUtils.java
++++ b/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/NightModeUtils.java
+@@ -106,6 +106,13 @@ public class NightModeUtils {
+     }
+ 
+     /**
++     * @return Whether the AMOLED black theme is currently selected.
++     */
++    public static boolean isAmoledTheme() {
++        return getThemeSetting() == ThemeType.AMOLED;
++    }
++
++    /**
+      * Returns the title to display for the given theme.
+      *
+      * @param context The context in which the title will be displayed.
+@@ -119,6 +126,8 @@ public class NightModeUtils {
+                 return context.getString(R.string.light_mode);
+             case ThemeType.SYSTEM_DEFAULT:
+                 return context.getString(R.string.themes_system_default_title);
++            case ThemeType.AMOLED:
++                return "AMOLED";
+         }
+         throw new IllegalArgumentException("Unknown `theme`: " + theme);
+     }
+--- a/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/GlobalNightModeStateController.java
++++ b/chrome/browser/ui/android/night_mode/java/src/org/chromium/chrome/browser/night_mode/GlobalNightModeStateController.java
+@@ -31,6 +31,7 @@ class GlobalNightModeStateController
+      * initialized yet.
+      */
+     private Boolean mNightModeOn;
++    private int mLastThemeSetting = -1;
+ 
+     private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener;
+ 
+@@ -122,10 +123,13 @@ class GlobalNightModeStateController
+         final int theme = NightModeUtils.getThemeSetting();
+         final boolean newNightModeOn =
+                 (theme == ThemeType.SYSTEM_DEFAULT
+                                 && SystemNightModeMonitor.getInstance().isSystemNightModeOn())
+-                        || theme == ThemeType.DARK;
+-        if (mNightModeOn != null && newNightModeOn == mNightModeOn) return;
++                        || theme == ThemeType.DARK
++                        || theme == ThemeType.AMOLED;
++        if (mNightModeOn != null && newNightModeOn == mNightModeOn && theme == mLastThemeSetting) {
++            return;
++        }
+ 
++        mLastThemeSetting = theme;
+         mNightModeOn = newNightModeOn;
+         AppCompatDelegate.setDefaultNightMode(
+                 mNightModeOn ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+--- a/components/browser_ui/styles/android/java/res/values/styles.xml
++++ b/components/browser_ui/styles/android/java/res/values/styles.xml
+@@ -477,4 +477,17 @@ found in the LICENSE file.
+     <style name="TextAppearance.TextAccentMediumThick.ColorOnPrimaryContainer">
+         <item name="android:textColor">?attr/colorOnPrimaryContainer</item>
+     </style>
++
++    <style name="ThemeOverlay.BrowserUI.Amoled" parent="">
++        <item name="android:colorBackground">@android:color/black</item>
++        <item name="android:windowBackground">@android:color/black</item>
++        <item name="android:statusBarColor">@android:color/black</item>
++        <item name="android:navigationBarColor">@android:color/black</item>
++        <item name="colorSurface">@android:color/black</item>
++        <item name="colorSurfaceContainerLowest">@android:color/black</item>
++        <item name="colorSurfaceContainerLow">@android:color/black</item>
++        <item name="colorSurfaceContainer">@android:color/black</item>
++        <item name="colorSurfaceContainerHigh">#0A0A0A</item>
++        <item name="colorSurfaceContainerHighest">#121212</item>
++    </style>
+ </resources>
+--- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeBaseAppCompatActivity.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeBaseAppCompatActivity.java
+@@ -629,5 +629,9 @@ public class ChromeBaseAppCompatActivity
+             applySingleThemeOverlay(R.style.ThemeOverlay_BrowserUI_DesktopDensity);
+             applySingleThemeOverlay(R.style.ThemeOverlay_BrowserUI_DesktopDensity_TabStrip);
+         }
++
++        if (NightModeUtils.isAmoledTheme()) {
++            applySingleThemeOverlay(R.style.ThemeOverlay_BrowserUI_Amoled);
++        }
+     }
+ 
+     protected void applySingleThemeOverlay(int themeOverlay) {
