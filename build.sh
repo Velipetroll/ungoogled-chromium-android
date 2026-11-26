@@ -306,7 +306,12 @@ if [ "$RESUME" != y ]; then
   pushd src
   mkdir -p "${output_folder}"
   if [ "$DEBUG" = n ] ; then
-      cat ../ungoogled-chromium/flags.gn ../android_flags.gn ../android_flags.release.gn > "${output_folder}"/args.gn
+      sed '/^chrome_pgo_phase=/d' ../ungoogled-chromium/flags.gn | cat - ../android_flags.gn ../android_flags.release.gn > "${output_folder}"/args.gn
+      if [ "$ARCH" = "arm64" ] && [ -f chrome/android/orderfiles/arm64/pgo_profile.arm64.profdata ]; then
+          printf '\nchrome_pgo_phase=2\n' >> "${output_folder}"/args.gn
+      else
+          printf '\nchrome_pgo_phase=0\n' >> "${output_folder}"/args.gn
+      fi
       if [ -f ../../uc_keystore/keystore.gn ]; then
           cat ../../uc_keystore/keystore.gn >> "${output_folder}"/args.gn
       fi

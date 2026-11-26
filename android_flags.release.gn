@@ -5,4 +5,5 @@ fatal_linker_warnings=false
 is_component_build=false
 is_debug=false
 is_official_build=true
+optimize_for_size=false
 symbol_level=1

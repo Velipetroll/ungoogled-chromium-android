@@ -22,7 +22,7 @@ src-fix/fix-android-extensions-core-guards.patch
 src-fix/fix-safebrowsing-android-link-stubs.patch
 src-fix/fix-safebrowsing-android-password-reuse.patch
 src-fix/fix-held-gms-dangling-deps.patch
-Vanadium/0003-switch-to-fstack-protector-strong.patch
+#Vanadium/0003-switch-to-fstack-protector-strong.patch
 Vanadium/0016-disable-seed-based-field-trials.patch
 Vanadium/0017-disable-fetching-variations.patch
 Vanadium/0018-disable-WebView-variations-support.patch
@@ -33,10 +33,10 @@ Vanadium/0034-disable-media-router-by-default.patch
 Vanadium/0043-enable-split-cache-by-default.patch
 Vanadium/0050-enable-strict-site-isolation-by-default-on-Android.patch
 Vanadium/0076-disable-using-Play-services-fonts.patch
-Vanadium/0010-enable-stack-clash-protection-for-arm64-targets.patch
-Vanadium/0013-enable-ftrivial-auto-var-init-zero.patch
-Vanadium/0015-Only-enable-shadow_call_stack-on-android-arm64-targe.patch
-Vanadium/0004-enable-fwrapv-in-Clang-for-non-UBSan-builds.patch
+#Vanadium/0010-enable-stack-clash-protection-for-arm64-targets.patch
+#Vanadium/0013-enable-ftrivial-auto-var-init-zero.patch
+#Vanadium/0015-Only-enable-shadow_call_stack-on-android-arm64-targe.patch
+#Vanadium/0004-enable-fwrapv-in-Clang-for-non-UBSan-builds.patch
 Vanadium/0063-disable-first-run-welcome-page.patch
 Vanadium/0075-disable-article-suggestions-feature-by-default.patch
 Vanadium/0077-disable-sensors-access-by-default.patch
