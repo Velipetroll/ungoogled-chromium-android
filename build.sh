@@ -180,6 +180,7 @@ function prepare_repos {
   python3 src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64
   python3 src/build/linux/sysroot_scripts/install-sysroot.py --arch=i386
   python3 src/v8/tools/builtins-pgo/download_profiles.py download --depot-tools "$(pwd -P)/depot_tools" --check-v8-revision --quiet || return $?
+  python3 src/tools/update_pgo_profiles.py --target=android-arm32 update --gs-url-base=chromium-optimization-profiles/pgo_profiles || return $?
   cp misc/UnindexedRules src/third_party/subresource-filter-ruleset/data
 }
 
