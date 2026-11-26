@@ -105,5 +105,6 @@ Own/enable-google-search-engine.patch
 Own/unpin-extensions-menu-button-by-default.patch
 Own/kirin810-arm64-optimizations.patch
 Own/add-amoled-theme.patch
+Own/enable-search-suggestions-by-default.patch
 
 #Other/debug-fix.patch
